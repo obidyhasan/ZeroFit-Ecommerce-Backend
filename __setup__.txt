@@ -6,5 +6,5 @@
 6. npm install --save-dev eslint @eslint/js typescript typescript-eslint
 7. npm i jsonwebtoken
 8. npm i --save-dev @types/jsonwebtoken
-9. npm i dotenv cors cookie-parser bcryptjs http-status-codes mongoose zod
-10. npm i --save-dev @types/bcryptjs @types/cors @types/dotenv
+9. npm i dotenv cors cookie-parser bcryptjs http-status-codes mongoose zod nodemailer express-session ejs
+10. npm i --save-dev @types/bcryptjs  @types/cookie-parser @types/cors @types/dotenv @types/nodemailer @types/express-session @types/ejs
