@@ -2,9 +2,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import nodemailer from "nodemailer";
 import { envVars } from "../config/env";
-import AppError from "../errors/AppError";
+
 import path from "path";
 import ejs from "ejs";
+import AppError from "../errors/AppError";
 
 const transporter = nodemailer.createTransport({
   secure: true,
@@ -36,7 +37,7 @@ export const sendEmail = async ({
   attachments,
 }: SendEmailOptions) => {
   try {
-    const templatePath = path.join(__dirname, `templates/${templateName}`);
+    const templatePath = path.join(__dirname, `templates/${templateName}.ejs`);
 
     const html = await ejs.renderFile(templatePath, templateData);
 

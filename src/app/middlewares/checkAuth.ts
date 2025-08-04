@@ -28,8 +28,8 @@ export const checkAuth =
       if (isUserExits.isDeleted)
         throw new AppError(httpStatus.BAD_REQUEST, "User is deleted");
 
-      if (!isUserExits.isVerified)
-        throw new AppError(httpStatus.BAD_REQUEST, "User is not verified!");
+      // if (!isUserExits.isVerified)
+      //   throw new AppError(httpStatus.BAD_REQUEST, "User is not verified!");
 
       if (
         isUserExits.status === UserStatus.BLOCKED ||
@@ -48,6 +48,7 @@ export const checkAuth =
         );
 
       req.user = verifiedToken;
+      next();
     } catch (error) {
       next(error);
     }

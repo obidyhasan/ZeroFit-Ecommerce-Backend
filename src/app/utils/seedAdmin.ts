@@ -5,38 +5,38 @@ import { IAuthProvider, IUser, Role } from "../modules/user/user.interface";
 import { User } from "../modules/user/user.model";
 import bcryptjs from "bcryptjs";
 
-export const seedSuperAdmin = async () => {
+export const seedAdmin = async () => {
   try {
-    const isSuperAdminExist = await User.findOne({
-      email: envVars.SUPER_ADMIN_EMAIL,
+    const isAdminExist = await User.findOne({
+      email: envVars.ADMIN_EMAIL,
     });
 
-    if (isSuperAdminExist) {
+    if (isAdminExist) {
       return;
     }
 
     const hashedPassword = await bcryptjs.hash(
-      envVars.SUPER_ADMIN_PASSWORD,
+      envVars.ADMIN_PASSWORD,
       Number(envVars.BCRYPT_SALT_ROUND)
     );
 
     const authProvider: IAuthProvider = {
       provider: "credentials",
-      providerId: envVars.SUPER_ADMIN_EMAIL,
+      providerId: envVars.ADMIN_EMAIL,
     };
 
     const payload: Partial<IUser> = {
-      name: "Super Admin",
-      role: Role.SUPER_ADMIN,
-      email: envVars.SUPER_ADMIN_EMAIL,
+      name: "Admin",
+      role: Role.ADMIN,
+      email: envVars.ADMIN_EMAIL,
       password: hashedPassword,
       isVerified: true,
       auths: [authProvider],
     };
 
-    const superAdmin = await User.create(payload);
+    const admin = await User.create(payload);
     if (envVars.NODE_ENV === "development") {
-      console.log("Super Admin created successfully - ", superAdmin);
+      console.log("Admin created successfully - ", admin);
     }
   } catch (error) {
     console.log(error);

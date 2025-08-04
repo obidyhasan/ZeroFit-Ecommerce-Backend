@@ -9,9 +9,9 @@ export const validateRequest =
       if (req.body.data) {
         req.body = JSON.parse(req.body.data);
       }
-
       req.body = await zodSchema.parseAsync(req.body);
-    } catch (error) {
-      next(error);
+      next();
+    } catch (err) {
+      next(err);
     }
   };
