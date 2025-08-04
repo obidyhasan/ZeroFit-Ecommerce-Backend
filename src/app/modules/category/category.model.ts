@@ -6,6 +6,7 @@ const subCategorySchema = new Schema<ISubCategory>(
   {
     name: { type: String, required: true, unique: true },
     slug: { type: String, unique: true, lowercase: true },
+    category: { type: Schema.Types.ObjectId, ref: "Category", required: true },
     thumbnail: { type: String },
     description: { type: String },
   },

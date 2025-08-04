@@ -4,6 +4,7 @@ export interface ISubCategory {
   _id?: Types.ObjectId;
   name: string;
   slug: string;
+  category: Types.ObjectId;
   thumbnail?: string;
   description?: string;
 }

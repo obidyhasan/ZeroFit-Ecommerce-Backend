@@ -3,7 +3,7 @@ import httpStatus from "http-status-codes";
 import { NextFunction, Request, Response } from "express";
 import { catchAsync } from "../../utils/catchAsync";
 import { sendResponse } from "../../utils/sendResponse";
-import { ICategory } from "./category.interface";
+import { ICategory, ISubCategory } from "./category.interface";
 import { CategoryService } from "./category.service";
 
 // const createCategory = catchAsync(
@@ -17,6 +17,7 @@ import { CategoryService } from "./category.service";
 //   }
 // );
 
+// --------------------- Category ------------------------
 const createCategory = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     const payload: ICategory = {
@@ -98,10 +99,99 @@ const deleteCategory = catchAsync(
   }
 );
 
+// --------------------- Sub Category ------------------------
+const createSubCategory = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const payload: ISubCategory = {
+      ...req.body,
+      thumbnail: req.file?.path,
+    };
+
+    const subCategory = await CategoryService.createSubCategory(payload);
+
+    sendResponse(res, {
+      success: true,
+      statusCode: httpStatus.CREATED,
+      message: "Create subCategory successfully",
+      data: subCategory,
+    });
+  }
+);
+
+const getAllSubCategory = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const subCategories = await CategoryService.getAllSubCategory();
+
+    sendResponse(res, {
+      success: true,
+      statusCode: httpStatus.OK,
+      message: "Get All subCategory successfully",
+      data: {
+        data: subCategories.data,
+        meta: subCategories.meta,
+      },
+    });
+  }
+);
+
+const getSingleSubCategory = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const subCategory = await CategoryService.getSingleSubCategory(
+      req.params.slug
+    );
+
+    sendResponse(res, {
+      success: true,
+      statusCode: httpStatus.OK,
+      message: "Get subCategory successfully",
+      data: subCategory,
+    });
+  }
+);
+
+const updateSubCategory = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const payload: ISubCategory = {
+      ...req.body,
+      thumbnail: req.file?.path,
+    };
+
+    const updateSubCategory = await CategoryService.updateSubCategory(
+      req.params.id,
+      payload
+    );
+
+    sendResponse(res, {
+      success: true,
+      statusCode: httpStatus.OK,
+      message: "Update category successfully",
+      data: updateSubCategory,
+    });
+  }
+);
+
+const deleteSubCategory = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    await CategoryService.deleteSubCategory(req.params.id);
+
+    sendResponse(res, {
+      success: true,
+      statusCode: httpStatus.OK,
+      message: "SubCategory delete successfully",
+      data: null,
+    });
+  }
+);
+
 export const CategoryController = {
   createCategory,
   getAllCategory,
   getSingleCategory,
   updateCategory,
   deleteCategory,
+  createSubCategory,
+  getAllSubCategory,
+  getSingleSubCategory,
+  updateSubCategory,
+  deleteSubCategory,
 };
