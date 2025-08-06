@@ -1,3 +1,5 @@
+/* eslint-disable no-console */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Product } from "./../product/product.model";
 import httpStatus from "http-status-codes";
 import { JwtPayload } from "jsonwebtoken";
@@ -8,6 +10,9 @@ import { Role } from "../user/user.interface";
 import { getTrackingId } from "../../utils/getTrackingId";
 import { User } from "../user/user.model";
 import { Cart } from "../cart/cart.model";
+import { generatePdf, IInvoiceData } from "../../utils/invoice";
+import { uploadBufferToCloudinary } from "../../config/cloudinary.config";
+import { sendEmail } from "../../utils/sendEmail";
 
 const createOrder = async (
   decodedToken: JwtPayload,
@@ -52,12 +57,88 @@ const createOrder = async (
   payload.statusLogs = [orderLog];
   payload.totalAmount = totalAmount;
 
-  const order = await Order.create({ ...payload, user: decodedToken.userId });
+  const createOrder = await Order.create({
+    ...payload,
+    user: decodedToken.userId,
+  });
 
-  isUserExits.orders?.push(order._id);
+  isUserExits.orders?.push(createOrder._id);
   await isUserExits.save();
 
-  return order;
+  // Create Invoice
+
+  const order = await Order.findById(createOrder._id)
+    .populate({
+      path: "carts",
+      populate: {
+        path: "product", // Assuming cart.product is ObjectId of Product
+        model: "Product",
+        select: "name newPrice", // select only needed fields
+      },
+    })
+    .populate("user");
+
+  if (!order) throw new AppError(httpStatus.NOT_FOUND, "Order does not found");
+
+  const user = await User.findById(order.user);
+  if (!user) throw new AppError(httpStatus.NOT_FOUND, "User does not found");
+
+  const invoiceData: IInvoiceData = {
+    trackingId: order.trackingId,
+    orderDate: order.createdAt,
+    userName: user?.name,
+    totalAmount: order.totalAmount,
+    products: order.carts.map((cart: any) => ({
+      name: cart.product.name,
+      quantity: cart.quantity,
+      price: cart.product.newPrice,
+    })),
+  };
+
+  const pdfBuffer = await generatePdf(invoiceData);
+
+  const cloudinaryResult = await uploadBufferToCloudinary(pdfBuffer, "invoice");
+
+  await Order.findByIdAndUpdate(
+    createOrder._id,
+    { invoiceUrl: cloudinaryResult?.secure_url },
+    { runValidators: true }
+  );
+
+  const additionalData = {
+    userEmail: user.email,
+    invoiceDownloadUrl: cloudinaryResult?.secure_url,
+  };
+
+  const templateData = {
+    ...invoiceData,
+    ...additionalData,
+  };
+
+  try {
+    await sendEmail({
+      to: user.email,
+      subject: "Your Order Invoice",
+      templateName: "invoice",
+      templateData,
+      attachments: [
+        {
+          filename: "invoice.pdf",
+          content: pdfBuffer,
+          contentType: "application/pdf",
+        },
+      ],
+    });
+  } catch (err) {
+    console.error("Failed to send invoice email:", err);
+    // Optionally decide if this should throw or be logged silently
+    throw new AppError(
+      httpStatus.INTERNAL_SERVER_ERROR,
+      "Failed to send email"
+    );
+  }
+
+  return createOrder;
 };
 
 const getAllOrders = async () => {
@@ -193,6 +274,37 @@ const updateOrder = async (
         `You can't update status ${payload.status}.Because order current status is ${isOrderExits.status}`
       );
     }
+  }
+
+  if (payload.status === ORDER_STATUS.Cancelled) {
+    const isCartsExits = await Cart.find({ _id: { $in: isOrderExits.carts } });
+    if (isCartsExits.length !== payload.carts?.length)
+      throw new AppError(
+        httpStatus.BAD_REQUEST,
+        "One or more carts do not exits!"
+      );
+
+    for (const cart of isCartsExits) {
+      const isProductExits = await Product.findById(cart.product);
+      if (!isProductExits)
+        throw new AppError(httpStatus.NOT_FOUND, "Product not found!");
+
+      if (isProductExits.quantity < cart.quantity)
+        throw new AppError(
+          httpStatus.NOT_FOUND,
+          `Not enough stock for product: ${isProductExits._id}`
+        );
+
+      isProductExits.quantity += cart.quantity;
+      await isProductExits.save();
+    }
+  }
+
+  if (payload.paymentStatus && decodedToken.role === Role.USER) {
+    throw new AppError(
+      httpStatus.UNAUTHORIZED,
+      `You are not authorized for this payment stats update.`
+    );
   }
 
   const orderLog: IOrderLog = {

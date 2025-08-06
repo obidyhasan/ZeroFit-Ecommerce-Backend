@@ -1,5 +1,5 @@
 import z from "zod";
-import { ORDER_STATUS } from "./order.interface";
+import { ORDER_STATUS, PAYMENT_STATUS } from "./order.interface";
 
 export const createOrderZodSchema = z.object({
   payment: z
@@ -27,5 +27,9 @@ export const updateOrderZodSchema = z.object({
   status: z.enum(Object.values(ORDER_STATUS) as [string], {
     message:
       "Invalid status provided. Please choose from 'Pending', 'Picked', 'InTransit', 'Delivered', 'Cancelled', 'Confirm'.",
+  }),
+  paymentStatus: z.enum(Object.values(PAYMENT_STATUS) as [string], {
+    message:
+      "Invalid payment status provided. Please choose from 'PAID', 'UNPAID', 'REFUNDED'.",
   }),
 });

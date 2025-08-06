@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Invoice</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f5f7fa;
+        color: #333;
+        padding: 20px;
+      }
+
+      .container {
+        max-width: 600px;
+        margin: auto;
+        background: #ffffff;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      }
+
+      h1 {
+        color: #1a73e8;
+        text-align: center;
+      }
+
+      .details {
+        margin-top: 20px;
+      }
+
+      .details p {
+        margin: 5px 0;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+      }
+
+      th,
+      td {
+        padding: 12px;
+        text-align: left;
+        border-bottom: 1px solid #eaeaea;
+      }
+
+      th {
+        background-color: #f1f3f5;
+      }
+
+      .total {
+        text-align: right;
+        margin-top: 20px;
+        font-size: 18px;
+        font-weight: bold;
+      }
+
+      .btn {
+        display: block;
+        width: max-content;
+        margin: 30px auto 0;
+        padding: 12px 24px;
+        background-color: #1a73e8;
+        color: #ffffff;
+        text-decoration: none;
+        border-radius: 6px;
+      }
+
+      .footer {
+        margin-top: 40px;
+        text-align: center;
+        font-size: 13px;
+        color: #888;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Invoice Confirmation</h1>
+
+      <div class="details">
+        <p><strong>Name:</strong> <%= userName || "N/A" %></p>
+        <p><strong>Email:</strong> <%= userEmail || "N/A" %></p>
+        <p><strong>Tracking ID:</strong> <%= trackingId || "N/A" %></p>
+        <p>
+          <strong>Order Date:</strong>
+          <%= orderDate ? new Date(orderDate).toLocaleString() : "N/A" %>
+        </p>
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Product</th>
+            <th>Qty</th>
+            <th>Price (BDT)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% if (products && products.length) { %> <%
+          products.forEach(function(product) { %>
+          <tr>
+            <td><%= product.name || "N/A" %></td>
+            <td><%= product.quantity || 0 %></td>
+            <td>
+              ৳<%= product.price != null ? product.price.toFixed(2) : "0.00" %>
+            </td>
+          </tr>
+          <% }); %> <% } else { %>
+          <tr>
+            <td colspan="3" style="text-align: center">No products found</td>
+          </tr>
+          <% } %>
+        </tbody>
+      </table>
+
+      <p class="total">
+        Total Paid: ৳<%= totalAmount != null ? totalAmount.toFixed(2) : "0.00"
+        %>
+      </p>
+
+      <% if (invoiceDownloadUrl) { %>
+      <a
+        class="btn"
+        href="<%= invoiceDownloadUrl %>"
+        target="_blank"
+        rel="noopener noreferrer"
+        >Download Invoice PDF</a
+      >
+      <% } %>
+
+      <div class="footer">
+        <p>Thanks for shopping with us!</p>
+        <p>&copy; <%= new Date().getFullYear() %> Your Company Name</p>
+      </div>
+    </div>
+  </body>
+</html>

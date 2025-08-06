@@ -21,15 +21,23 @@ export interface IOrderLog {
   note?: string;
 }
 
+export enum PAYMENT_STATUS {
+  PAID = "PAID",
+  UNPAID = "UNPAID",
+  REFUNDED = "REFUNDED",
+}
+
 export interface IOrder {
   _id?: Types.ObjectId;
-  trackingId?: string;
+  trackingId: string;
   user: Types.ObjectId;
   carts: Types.ObjectId[];
   payment?: Types.ObjectId;
   paymentMethod?: PAYMENT_METHOD;
+  paymentStatus: PAYMENT_STATUS;
   status: ORDER_STATUS;
   statusLogs?: IOrderLog[];
   totalAmount: number;
-  createdAt?: Date;
+  invoiceUrl?: string;
+  createdAt: Date;
 }

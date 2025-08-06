@@ -4,6 +4,7 @@ import {
   IOrderLog,
   ORDER_STATUS,
   PAYMENT_METHOD,
+  PAYMENT_STATUS,
 } from "./order.interface";
 
 const statusLogSchema = new Schema<IOrderLog>(
@@ -34,8 +35,16 @@ const orderSchema = new Schema<IOrder>(
       enum: Object.values(ORDER_STATUS),
       default: ORDER_STATUS.Pending,
     },
+    paymentStatus: {
+      type: String,
+      enum: Object.values(PAYMENT_STATUS),
+      default: PAYMENT_STATUS.UNPAID,
+    },
     totalAmount: { type: Number },
     statusLogs: [statusLogSchema],
+    invoiceUrl: {
+      type: String,
+    },
   },
   {
     timestamps: true,
