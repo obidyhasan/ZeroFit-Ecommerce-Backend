@@ -6,6 +6,7 @@ import { CategoryRouters } from "../modules/category/category.route";
 import { CartRouter } from "../modules/cart/cart.route";
 import { OrderRouters } from "../modules/order/order.route";
 import { OTPRouter } from "../modules/otp/otp.route";
+import { StatsRouters } from "../modules/stats/stats.route";
 
 export const router = Router();
 
@@ -37,6 +38,10 @@ const moduleRouters = [
   {
     path: "/otp",
     router: OTPRouter,
+  },
+  {
+    path: "/stats",
+    router: StatsRouters,
   },
 ];
 
