@@ -84,12 +84,25 @@ const deleteOrder = catchAsync(
   }
 );
 
+const getInvoiceDownloadUrl = catchAsync(
+  async (req: Request, res: Response) => {
+    const result = await OrderService.getInvoiceDownloadUrl(req.params.orderId);
+    sendResponse(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: "Invoice download URL retrieved successfully",
+      data: result,
+    });
+  }
+);
+
 export const OrderController = {
   createOrder,
   getAllOrders,
   getMyOrders,
   updateOrder,
   deleteOrder,
+  getInvoiceDownloadUrl,
 };
 
 // const createCategory = catchAsync(

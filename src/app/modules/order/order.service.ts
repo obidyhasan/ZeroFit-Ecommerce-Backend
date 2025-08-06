@@ -345,10 +345,21 @@ const deleteOrder = async (orderId: string, decodedToken: JwtPayload) => {
   );
 };
 
+const getInvoiceDownloadUrl = async (orderId: string) => {
+  const order = await Order.findById(orderId).select("invoiceUrl");
+
+  if (!order) throw new AppError(httpStatus.NOT_FOUND, "Order not found");
+  if (!order.invoiceUrl)
+    throw new AppError(httpStatus.NOT_FOUND, "No invoice found");
+
+  return order.invoiceUrl;
+};
+
 export const OrderService = {
   createOrder,
   getAllOrders,
   getMyOrders,
   updateOrder,
   deleteOrder,
+  getInvoiceDownloadUrl,
 };

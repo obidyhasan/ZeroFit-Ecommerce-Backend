@@ -39,4 +39,10 @@ router.delete(
   OrderController.deleteOrder
 );
 
+router.get(
+  "/invoice/:orderId",
+  checkAuth(...Object.values(Role)),
+  OrderController.getInvoiceDownloadUrl
+);
+
 export const OrderRouters = router;
