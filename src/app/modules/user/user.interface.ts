@@ -32,4 +32,5 @@ export interface IUser {
   auths: IAuthProvider[];
   createdAt?: Date;
   carts?: Types.ObjectId[];
+  orders?: Types.ObjectId[];
 }

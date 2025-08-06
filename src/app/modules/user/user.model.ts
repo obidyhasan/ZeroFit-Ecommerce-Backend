@@ -34,6 +34,7 @@ const userSchema = new Schema<IUser>(
     isVerified: { type: Boolean, default: false },
     auths: [authProviderSchema],
     carts: [{ type: Schema.Types.ObjectId, ref: "Cart" }],
+    orders: [{ type: Schema.Types.ObjectId, ref: "Order" }],
   },
   {
     timestamps: true,

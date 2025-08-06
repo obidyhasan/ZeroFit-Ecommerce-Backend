@@ -62,8 +62,6 @@ const updateUser = async (
   payload: Partial<IUser>,
   decodedToken: JwtPayload
 ) => {
-  console.log(payload);
-
   if (decodedToken.role === Role.USER) {
     if (userId !== decodedToken.userId) {
       throw new AppError(httpStatus.FORBIDDEN, "You are not authorized");
