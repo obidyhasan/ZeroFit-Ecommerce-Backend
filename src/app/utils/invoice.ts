@@ -86,7 +86,7 @@ export const generatePdf = async (
       invoiceData.products.forEach((item) => {
         doc.text(item.name, 50);
         doc.text(`${item.quantity}`, 250);
-        doc.text(`৳${item.price.toFixed(2)}`, 400);
+        doc.text(`BDT ${item.price.toFixed(2)}`, 400);
         doc.moveDown(0.5);
       });
 
@@ -94,11 +94,11 @@ export const generatePdf = async (
 
       // ========== TOTAL SECTION ==========
       doc.fontSize(11);
-      doc.text(`Subtotal: ৳${invoiceData.totalAmount.toFixed(2)}`, 400);
+      doc.text(`Subtotal: BDT ${invoiceData.totalAmount.toFixed(2)}`, 400);
       doc.text(`Shipping: Free`, 400);
       doc
         .font("Helvetica-Bold")
-        .text(`Total: ৳${invoiceData.totalAmount.toFixed(2)}`, 400);
+        .text(`Total: BDT ${invoiceData.totalAmount.toFixed(2)}`, 400);
       doc.moveDown(4);
 
       // ========== FOOTER ==========

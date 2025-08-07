@@ -105,7 +105,8 @@
             <td><%= product.name || "N/A" %></td>
             <td><%= product.quantity || 0 %></td>
             <td>
-              ৳<%= product.price != null ? product.price.toFixed(2) : "0.00" %>
+              BDT <%= product.price != null ? product.price.toFixed(2) : "0.00"
+              %>
             </td>
           </tr>
           <% }); %> <% } else { %>
@@ -117,8 +118,8 @@
       </table>
 
       <p class="total">
-        Total Paid: ৳<%= totalAmount != null ? totalAmount.toFixed(2) : "0.00"
-        %>
+        Total Paid: BDT <%= totalAmount != null ? totalAmount.toFixed(2) :
+        "0.00" %>
       </p>
 
       <% if (invoiceDownloadUrl) { %>
